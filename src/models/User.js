@@ -1,6 +1,10 @@
+// Import Packages
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+const crypto = require("crypto");
 
+// User model Schema
 const userSchema = new mongoose.Schema(
   {
     firstName: {
@@ -39,6 +43,7 @@ const userSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+// User model middlewares
 userSchema.pre("save", async function (next) {
   if (!this.isModified("password")) {
     next();
@@ -49,4 +54,29 @@ userSchema.pre("save", async function (next) {
   next();
 });
 
+// User model methods
+userSchema.methods = {
+  authenticate: async function (password) {
+    return bcrypt.compare(password, this.password);
+  },
+  getSignedToken: function () {
+    return jwt.sign({ id: this._id }, process.env.JWT_SECRET, {
+      expiresIn: process.env.JWT_EXPIRES,
+    });
+  },
+  setResetPasswordToken: function () {
+    const resetPasswordToken = crypto.randomBytes(20).toString("hex");
+
+    this.resetToken = crypto
+      .createHash("sha256")
+      .update(resetPasswordToken)
+      .digest("hex");
+
+    this.resetTokenExpiration = Date.now() + 60 * (60 * 1000);
+
+    return resetPasswordToken;
+  },
+};
+
+// Export User Model
 module.exports = mongoose.model("User", userSchema);

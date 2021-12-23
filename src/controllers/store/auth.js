@@ -1,8 +1,27 @@
+// Import Packages
+const crypto = require("crypto");
+
+// Import Models
 const User = require("../../models/User");
 
+// Import middlewares
+const Error = require("../../utils/errResponse");
+const { sendEmail } = require("../../utils/sendEmail");
+
+// Signup controller
 exports.storeSignup = async (req, res, next) => {
+  // Destructure inputs
   const { firstName, lastName, email, password, contactNumber } = req.body;
-  const role="store";
+
+  // Existing User
+  const userExists = await User.findOne({ email });
+  if (userExists) {
+    next(new Error("User Already Exists", 400));
+  }
+
+  const role = "store"; // set Role
+
+  // Create New User obkect
   const _user = new User({
     firstName,
     lastName,
@@ -11,28 +30,150 @@ exports.storeSignup = async (req, res, next) => {
     email,
     password,
   });
+
   try {
-    await _user.save();
-    res.status(201).json({
-      success: true,
-      _user,
-    });
+    await _user.save(); // save user to DB
+    sendToken(_user, 201, res); // return sucsess
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      err: error.message,
-    });
+    // Error
+    next(error);
   }
 };
 
-exports.storeSignin = (req, res, next) => {
-  return res.status(400).json({ message: "Store Signin" });
+// Signin controller
+exports.storeSignin = async (req, res, next) => {
+  // Destructure Inputs
+  const { email, password } = req.body;
+
+  // Check Email& Password
+  if (!email || !password) {
+    return next(new Error("Please provide email & password", 401));
+  }
+
+  const role = "store"; // set Role for check
+
+  try {
+    // Find existing user with the same email
+    const _user = await User.findOne({ email }).select("+password");
+    if (!_user) {
+      return next(new Error("Invalid credentials", 401));
+    }
+
+    // Check Password
+    const isPassword = await _user.authenticate(password);
+    if (!isPassword) {
+      return next(new Error("Password Invalid", 401));
+    }
+
+    // Check Role
+    if (isPassword && _user.role == role) {
+      sendToken(_user, 200, res);
+    }
+  } catch (error) {
+    // Error
+    next(error);
+  }
 };
 
-exports.storeForgotPassword = (req, res, next) => {
-  return res.status(400).json({ message: "Store forgot password" });
+// Forgot-Password Controller
+exports.storeForgotPassword = async (req, res, next) => {
+  // Destructure Inputs
+  const { email } = req.body;
+
+  try {
+    // Find Existing user with the email
+    const _user = await User.findOne({ email });
+    if (!_user) {
+      next(new Error("Email could not be sent", 400));
+    }
+
+    // Set Token for password reset
+    const resetPasswordToken = _user.setResetPasswordToken();
+
+    await _user.save(); // Update User
+
+    // Create email
+    const resetURL = `https://${process.env.CLIENT_ADMIN_URL}/forgot-password/${resetPasswordToken}`;
+    const message = `
+    <h1>Reset Password</h1>
+    <a href=${resetURL} clickTracking=Off>${resetURL}</a>
+    `;
+
+    try {
+      // Send Email
+      await sendEmail({
+        to: _user.email,
+        subject: "Password Reset",
+        text: message,
+      });
+
+      // Send success
+      res.status(200).json({
+        success: true,
+        data: "Email Sent",
+      });
+    } catch (error) {
+      // Reset User
+      _user.resetToken = undefined;
+      _user.resetTokenExpiration = undefined;
+      _user.save();
+
+      // Error
+      next(new Error("Email could not be sent", 500));
+    }
+  } catch (error) {
+    // Error
+    next(error);
+  }
 };
 
-exports.storeResetPassword = (req, res, next) => {
-  return res.status(400).json({ message: "Store reset password" });
+// Reset Password Controller
+exports.storeResetPassword = async (req, res, next) => {
+  // Destructure Inputs
+  const resetToken = req.params.resetToken;
+  const password = req.body.password;
+
+  // Hask token
+  const resetPasswordToken = crypto
+    .createHash("sha256")
+    .update(resetToken)
+    .digest("hex");
+
+  try {
+    // Find Existing User with hashed token & expiration
+    const _user = await User.findOne({
+      resetToken: resetPasswordToken,
+      resetTokenExpiration: { $gt: Date.now() },
+    });
+
+    if (!_user) {
+      next(new Error("Token Expired", 400));
+    }
+
+    // Set New Password & Reset tokens
+    _user.password = password;
+    _user.resetToken = undefined;
+    _user.resetTokenExpiration = undefined;
+
+    await _user.save(); // Save user
+
+    // Return success
+    return res.status(201).json({
+      success: true,
+      data: "Password reset success",
+    });
+  } catch (err) {
+    // Error
+    console.log(err);
+    next(err);
+  }
+};
+
+// Controller Functions
+const sendToken = (user, statusCode, res) => {
+  const token = user.getSignedToken();
+  res.status(statusCode).json({
+    success: true,
+    token,
+  });
 };
