@@ -3,9 +3,7 @@ const env = require("dotenv").config();
 const express = require("express");
 const connectDB = require("./config/db");
 
-const bodyParser = require("body-parser")
-
-
+const bodyParser = require("body-parser");
 
 // Import Error handlers
 const errorhandler = require("./middlewares/errHandler");
@@ -16,12 +14,14 @@ connectDB();
 
 // Import Routes
 const storeAuthRoutes = require("./routes/store/auth");
+const storeProductRoutes = require("./routes/store/product");
 
 // App middlewares
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use("/api", storeAuthRoutes);
+app.use("/api", storeProductRoutes);
 
 // Error Middlewares
 app.use(errorhandler);
