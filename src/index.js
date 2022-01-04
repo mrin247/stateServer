@@ -4,7 +4,7 @@ const express = require("express");
 const connectDB = require("./config/db");
 
 const bodyParser = require("body-parser");
-
+const cors = require("cors");
 // Import Error handlers
 const errorhandler = require("./middlewares/errHandler");
 
@@ -17,6 +17,7 @@ const storeAuthRoutes = require("./routes/store/auth");
 const storeProductRoutes = require("./routes/store/product");
 
 // App middlewares
+app.use(cors());
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 

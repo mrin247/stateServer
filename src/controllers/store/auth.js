@@ -170,10 +170,18 @@ exports.storeResetPassword = async (req, res, next) => {
 };
 
 // Controller Functions
-const sendToken = (user, statusCode, res) => {
-  const token = user.getSignedToken();
+const sendToken = (_user, statusCode, res) => {
+  const token = _user.getSignedToken();
+  const user = {
+    _id: _user._id,
+    email: _user.email,
+    role: _user.role,
+    firstName: _user.firstName,
+    lastName: _user.lastName,
+  };
   res.status(statusCode).json({
     success: true,
     token,
+    user,
   });
 };
