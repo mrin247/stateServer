@@ -11,7 +11,7 @@ const { sendEmail } = require("../../utils/sendEmail");
 // Signup controller
 exports.storeSignup = async (req, res, next) => {
   // Destructure inputs
-  const { firstName, lastName, email, password, contactNumber } = req.body;
+  const { firstName, lastName, email, password, contactNumber, address, state, pin } = req.body;
 
   // Existing User
   const userExists = await User.findOne({ email });
@@ -27,6 +27,7 @@ exports.storeSignup = async (req, res, next) => {
     lastName,
     role,
     contactNumber,
+    address, state, pin,
     email,
     password,
   });
@@ -36,6 +37,7 @@ exports.storeSignup = async (req, res, next) => {
     sendToken(_user, 201, res); // return sucsess
   } catch (error) {
     // Error
+    console.log(error);
     next(error);
   }
 };
