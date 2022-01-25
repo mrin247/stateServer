@@ -75,6 +75,14 @@ exports.storeSignin = async (req, res, next) => {
   }
 };
 
+// Signout Controller
+exports.storeSignout = async (req, res) => {
+  await res.clearCookie("token");
+  res.status(200).json({
+    message: "Signout successfully...!",
+  });
+};
+
 // Forgot-Password Controller
 exports.storeForgotPassword = async (req, res, next) => {
   // Destructure Inputs
@@ -179,6 +187,7 @@ const sendToken = (_user, statusCode, res) => {
     firstName: _user.firstName,
     lastName: _user.lastName,
   };
+  res.cookie("token", token, { expiresIn: "10d" });
   res.status(statusCode).json({
     success: true,
     token,

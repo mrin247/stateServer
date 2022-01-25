@@ -7,6 +7,7 @@ const {
   storeSignin,
   storeForgotPassword,
   storeResetPassword,
+  storeSignout,
 } = require("../../controllers/store/auth");
 
 // Create router
@@ -17,6 +18,7 @@ router.post("/store/auth/signup", storeSignup);
 router.post("/store/auth/signin", storeSignin);
 router.post("/store/auth/forgot-password", storeForgotPassword);
 router.put("/store/auth/reset-password/:resetToken", storeResetPassword);
+router.post("/store/auth/signout", storeSignout);
 
 // Exports
 module.exports = router;
