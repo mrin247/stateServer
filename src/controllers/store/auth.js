@@ -103,7 +103,7 @@ exports.storeForgotPassword = async (req, res, next) => {
     await _user.save(); // Update User
 
     // Create email
-    const resetURL = `https://${process.env.CLIENT_ADMIN_URL}/forgot-password/${resetPasswordToken}`;
+    const resetURL = `http://${process.env.CLIENT_ADMIN_URL}/reset-password/${resetPasswordToken}`;
     const message = `
     <h1>Reset Password</h1>
     <a href=${resetURL} clickTracking=Off>${resetURL}</a>
