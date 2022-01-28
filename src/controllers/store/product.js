@@ -4,11 +4,12 @@ const Error = require("../../utils/errResponse");
 
 // Create new Product
 exports.createProduct = async (req, res, next) => {
-  const { name, price, quantity, description, category } = req.body;
+  const { name, price, quantity, description, category, inStock } = req.body;
 
   const _product = new Product({
     name,
     price,
+    inStock,
     quantity,
     description,
     category,
