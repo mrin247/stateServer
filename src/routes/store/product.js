@@ -21,9 +21,7 @@ router.post(
 );
 
 router.get(
-  "/store/product/:productId",
-  isAuthenticated,
-  isStore,
+  "/product/:productId",
   getProductById
 );
 
