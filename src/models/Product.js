@@ -21,6 +21,10 @@ const productSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
+    inStock: {
+      type: Boolean,
+      required: true,
+    },
     offer: { type: Number },
     productPhotos: [{ img: { type: String } }],
     category: { type: String, required: true },

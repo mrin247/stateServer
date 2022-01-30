@@ -44,6 +44,7 @@ exports.getProductById = async (req, res, next) => {
   try {
     const _product = await Product.findOne({ _id: productId });
     if (!_product) {
+      console.log("hey");
       return next(new Error("Product Not found", 204));
     }
     return res.status(200).json({ success: true, product: _product });
@@ -54,7 +55,7 @@ exports.getProductById = async (req, res, next) => {
 
 // Edit Product by ID
 exports.editProduct = async (req, res, next) => {
-  const { name, price, quantity, description, category } = req.body;
+  const { name, price, quantity, description, category, inStock } = req.body;
   const { productId } = req.params;
 
   const query = { _id: productId };
@@ -65,6 +66,7 @@ exports.editProduct = async (req, res, next) => {
     quantity,
     description,
     category,
+    inStock,
   };
 
   try {
@@ -91,7 +93,7 @@ exports.deleteProduct = async (req, res, next) => {
   const query = { _id: productId };
   try {
     await Product.findOneAndDelete(query);
-    return res.status(200).json({ success: true, mdg: "Product Deleted" });
+    return res.status(200).json({ success: true, msg: "Product Deleted" });
   } catch (err) {
     next(err);
   }
