@@ -4,7 +4,17 @@ const Error = require("../../utils/errResponse");
 
 // Create new Product
 exports.createProduct = async (req, res, next) => {
+  //res.status(200).json({file:req.files, body:req.body});
+
+  // console.log(req);
   const { name, price, quantity, description, category, inStock } = req.body;
+  let productPhotos = [];
+
+  if (req.files && req.files.length > 0) {
+    productPhotos = req.files.map((file) => {
+      return { img: file.path };
+    });
+  }
 
   const _product = new Product({
     name,
@@ -13,6 +23,7 @@ exports.createProduct = async (req, res, next) => {
     quantity,
     description,
     category,
+    productPhotos,
     createdBy: req.user._id,
   });
 
