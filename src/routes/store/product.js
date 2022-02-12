@@ -13,8 +13,6 @@ const { uploadS3 } = require("../../middlewares/aws");
 
 const router = express.Router();
 
-
-
 router.get("/store/product", isAuthenticated, isStore, getAllProducts);
 
 router.post(
@@ -27,7 +25,13 @@ router.post(
 
 router.get("/product/:productId", getProductById);
 
-router.post("/store/product/:productId", isAuthenticated, isStore, editProduct);
+router.post(
+  "/store/product/:productId",
+  isAuthenticated,
+  isStore,
+  uploadS3.array("productPhotos"),
+  editProduct
+);
 
 router.delete(
   "/store/product/:productId",

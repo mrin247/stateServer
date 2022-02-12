@@ -67,6 +67,13 @@ exports.getProductById = async (req, res, next) => {
 // Edit Product by ID
 exports.editProduct = async (req, res, next) => {
   const { name, price, quantity, description, category, inStock } = req.body;
+  let productPhotos = [];
+
+  if (req.files && req.files.length > 0) {
+    productPhotos = req.files.map((file) => {
+      return { img: file.location };
+    });
+  }
   const { productId } = req.params;
 
   const query = { _id: productId };
@@ -78,6 +85,7 @@ exports.editProduct = async (req, res, next) => {
     description,
     category,
     inStock,
+    productPhotos,
   };
 
   try {
