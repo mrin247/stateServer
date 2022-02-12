@@ -12,7 +12,7 @@ exports.createProduct = async (req, res, next) => {
 
   if (req.files && req.files.length > 0) {
     productPhotos = req.files.map((file) => {
-      return { img: file.path };
+      return { img: file.location };
     });
   }
 

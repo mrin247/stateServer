@@ -9,19 +9,11 @@ const {
   deleteProduct,
 } = require("../../controllers/store/product");
 const { isAuthenticated, isStore } = require("../../middlewares/authenticate");
+const { uploadS3 } = require("../../middlewares/aws");
 
 const router = express.Router();
 
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, path.join(path.dirname(__dirname), "../uploads"));
-  },
-  filename: function (req, file, cb) {
-    cb(null, Date.now() + "-" + file.originalname);
-  },
-});
 
-const upload = multer({ storage });
 
 router.get("/store/product", isAuthenticated, isStore, getAllProducts);
 
@@ -29,7 +21,7 @@ router.post(
   "/store/product/create-product",
   isAuthenticated,
   isStore,
-  upload.array("productPhotos"),
+  uploadS3.array("productPhotos"),
   createProduct
 );
 
