@@ -16,6 +16,8 @@ connectDB();
 const storeAuthRoutes = require("./routes/store/auth");
 const storeProductRoutes = require("./routes/store/product");
 
+const clientAuthRoutes = require("./routes/client/auth");
+
 // App middlewares
 app.use(cors());
 app.use(express.json());
@@ -26,6 +28,7 @@ app.use("/public", express.static(path.join(__dirname, "uploads")));
 app.use("/api", storeAuthRoutes);
 app.use("/api", storeProductRoutes);
 
+app.use("/api", clientAuthRoutes);
 // Error Middlewares
 app.use(errorhandler);
 
