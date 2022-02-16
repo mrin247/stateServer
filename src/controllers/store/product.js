@@ -1,4 +1,3 @@
-const { find } = require("../../models/Product");
 const Product = require("../../models/Product");
 const Error = require("../../utils/errResponse");
 

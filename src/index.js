@@ -18,6 +18,8 @@ const storeProductRoutes = require("./routes/store/product");
 
 const clientAuthRoutes = require("./routes/client/auth");
 
+const clientProductRoutes = require("./routes/client/product");
+
 // App middlewares
 app.use(cors());
 app.use(express.json());
@@ -29,6 +31,7 @@ app.use("/api", storeAuthRoutes);
 app.use("/api", storeProductRoutes);
 
 app.use("/api", clientAuthRoutes);
+app.use("/api", clientProductRoutes);
 // Error Middlewares
 app.use(errorhandler);
 
