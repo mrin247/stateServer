@@ -23,7 +23,12 @@ router.post(
   createProduct
 );
 
-router.get("/product/:productId", getProductById);
+router.get(
+  "/store/product/:productId",
+  isAuthenticated,
+  isStore,
+  getProductById
+);
 
 router.post(
   "/store/product/:productId",

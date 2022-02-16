@@ -14,3 +14,17 @@ exports.getProductByCategory = async (req, res, next) => {
     next(err);
   }
 };
+
+// Get Product by ID
+exports.getProductById = async (req, res, next) => {
+  const { productId } = req.params;
+  try {
+    const _product = await Product.findOne({ _id: productId });
+    if (!_product) {
+      return next(new Error("Product Not found", 204));
+    }
+    return res.status(200).json({ success: true, product: _product });
+  } catch (err) {
+    next(err);
+  }
+};
