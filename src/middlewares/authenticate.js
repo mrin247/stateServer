@@ -45,3 +45,11 @@ exports.isStore = (req, res, next) => {
   }
   next();
 };
+
+// Middleware to check client access
+exports.isClient = (req, res, next) => {
+  if (req.user.role !== "client") {
+    return next(new Error("Client access denied", 401));
+  }
+  next();
+};

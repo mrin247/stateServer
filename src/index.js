@@ -17,7 +17,7 @@ const storeAuthRoutes = require("./routes/store/auth");
 const storeProductRoutes = require("./routes/store/product");
 
 const clientAuthRoutes = require("./routes/client/auth");
-
+const clientcartRoutes = require("./routes/client/cart");
 const clientProductRoutes = require("./routes/client/product");
 
 // App middlewares
@@ -31,6 +31,7 @@ app.use("/api", storeAuthRoutes);
 app.use("/api", storeProductRoutes);
 
 app.use("/api", clientAuthRoutes);
+app.use("/api", clientcartRoutes);
 app.use("/api", clientProductRoutes);
 // Error Middlewares
 app.use(errorhandler);
