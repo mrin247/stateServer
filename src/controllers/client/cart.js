@@ -16,7 +16,7 @@ function runUpdate(condition, updateData) {
   });
 }
 
-exports.addItemToCart = async (req, res) => {
+exports.addItemToCart = async (req, res,next) => {
   const { seller, cartItems } = req.body;
   const userId = req.user._id;
   try {
@@ -78,7 +78,7 @@ exports.addItemToCart = async (req, res) => {
   }
 };
 
-exports.getCartItems = async (req, res) => {
+exports.getCartItems = async (req, res,next) => {
   const user = req.user._id;
   try {
     const cart = await Cart.findOne({ user: user }).populate(
@@ -97,7 +97,7 @@ exports.getCartItems = async (req, res) => {
           seller: item.product.createdBy.toString(),
         };
       });
-      res.status(201).json({ cartItems });
+      res.status(200).json({ cartItems });
     } else {
       return next(new Error("Cart not existed", 401));
     }
@@ -107,7 +107,7 @@ exports.getCartItems = async (req, res) => {
 };
 
 // new update remove cart items
-exports.removeCartItems = async (req, res) => {
+exports.removeCartItems = async (req, res,next) => {
   const { productId } = req.body.payload;
   try {
     const deletedItem = await Cart.findOneAndUpdate(
