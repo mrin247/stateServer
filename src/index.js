@@ -19,6 +19,7 @@ const storeProductRoutes = require("./routes/store/product");
 const clientAuthRoutes = require("./routes/client/auth");
 const clientcartRoutes = require("./routes/client/cart");
 const clientProductRoutes = require("./routes/client/product");
+const clientAddressRoutes = require("./routes/client/address");
 
 // App middlewares
 app.use(cors());
@@ -33,6 +34,7 @@ app.use("/api", storeProductRoutes);
 app.use("/api", clientAuthRoutes);
 app.use("/api", clientcartRoutes);
 app.use("/api", clientProductRoutes);
+app.use("/api", clientAddressRoutes);
 // Error Middlewares
 app.use(errorhandler);
 
