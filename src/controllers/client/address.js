@@ -18,7 +18,9 @@ exports.addAddress = async (req, res, next) => {
           { new: true }
         );
         if (updatedAddress) {
-          return res.status(201).json({ sucess: true, updatedAddress });
+          return res
+            .status(201)
+            .json({ sucess: true, address: updatedAddress });
         } else {
           return next(new Error("Invalid Credentials", 401));
         }
@@ -34,7 +36,7 @@ exports.addAddress = async (req, res, next) => {
           { new: true, upsert: true }
         );
         if (newAddress) {
-          return res.status(201).json({ sucess: true, newAddress });
+          return res.status(201).json({ sucess: true, address: newAddress });
         } else {
           return next(new Error("Invalid Credentials", 401));
         }
@@ -56,6 +58,7 @@ exports.getAddress = async (req, res, next) => {
       return next(new Error("No addresses found", 400));
     }
   } catch (error) {
+    console.log(error);
     next(error);
   }
 };
