@@ -18,7 +18,7 @@ exports.addAddress = async (req, res, next) => {
           { new: true }
         );
         if (updatedAddress) {
-          return res.status(201).json({ updatedAddress });
+          return res.status(201).json({ sucess: true, updatedAddress });
         } else {
           return next(new Error("Invalid Credentials", 401));
         }
@@ -34,7 +34,7 @@ exports.addAddress = async (req, res, next) => {
           { new: true, upsert: true }
         );
         if (newAddress) {
-          return res.status(201).json({ newAddress });
+          return res.status(201).json({ sucess: true, newAddress });
         } else {
           return next(new Error("Invalid Credentials", 401));
         }
@@ -51,7 +51,7 @@ exports.getAddress = async (req, res, next) => {
   try {
     const addresses = await UserAddress.findOne({ user: req.user._id });
     if (addresses) {
-      return res.status(200).json({ addresses });
+      return res.status(200).json({ sucess: true, addresses });
     } else {
       return next(new Error("No addresses found", 400));
     }
