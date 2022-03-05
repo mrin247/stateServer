@@ -33,7 +33,7 @@ exports.addOrder = async (req, res, next) => {
       const _order = new Order(req.body);
       const order = await _order.save();
       if (order) {
-        return res.status(200).json({ sucess: true, order });
+        return res.status(201).json({ sucess: true, order });
       } else {
         return new Error("Order failed", 400);
       }
