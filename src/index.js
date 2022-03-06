@@ -15,6 +15,7 @@ connectDB();
 // Import Routes
 const storeAuthRoutes = require("./routes/store/auth");
 const storeProductRoutes = require("./routes/store/product");
+const storeOrderRoutes = require("./routes/store/order");
 
 const clientAuthRoutes = require("./routes/client/auth");
 const clientcartRoutes = require("./routes/client/cart");
@@ -31,6 +32,7 @@ app.use("/public", express.static(path.join(__dirname, "uploads")));
 
 app.use("/api", storeAuthRoutes);
 app.use("/api", storeProductRoutes);
+app.use("/api", storeOrderRoutes);
 
 app.use("/api", clientAuthRoutes);
 app.use("/api", clientcartRoutes);
