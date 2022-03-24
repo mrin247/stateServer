@@ -11,25 +11,46 @@ exports.addOrder = async (req, res, next) => {
     if (result.deletedCount > 0) {
       // Cart deleted Successfully
       req.body.user = user;
-      req.body.orderStatus = [
-        {
-          type: "ordered",
-          date: new Date(),
-          isCompleted: true,
-        },
-        {
-          type: "packed",
-          isCompleted: false,
-        },
-        {
-          type: "shipped",
-          isCompleted: false,
-        },
-        {
-          type: "delivered",
-          isCompleted: false,
-        },
-      ];
+      req.body.items.map((item) => {
+        item.orderStatus = [
+          {
+            type: "ordered",
+            date: new Date(),
+            isCompleted: true,
+          },
+          {
+            type: "packed",
+            isCompleted: false,
+          },
+          {
+            type: "shipped",
+            isCompleted: false,
+          },
+          {
+            type: "delivered",
+            isCompleted: false,
+          },
+        ];
+      });
+      // req.body.items.orderStatus = [
+      //   {
+      //     type: "ordered",
+      //     date: new Date(),
+      //     isCompleted: true,
+      //   },
+      //   {
+      //     type: "packed",
+      //     isCompleted: false,
+      //   },
+      //   {
+      //     type: "shipped",
+      //     isCompleted: false,
+      //   },
+      //   {
+      //     type: "delivered",
+      //     isCompleted: false,
+      //   },
+      // ];
       const _order = new Order(req.body);
       const order = await _order.save();
       if (order) {

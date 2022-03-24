@@ -34,6 +34,22 @@ const orderSchema = new mongoose.Schema(
           type: Number,
           required: true,
         },
+        orderStatus: [
+          {
+            type: {
+              type: String,
+              enum: ["ordered", "packed", "shipped", "delivered"],
+              default: "ordered",
+            },
+            date: {
+              type: Date,
+            },
+            isCompleted: {
+              type: Boolean,
+              default: false,
+            },
+          },
+        ],
       },
     ],
     paymentStatus: {
@@ -46,22 +62,6 @@ const orderSchema = new mongoose.Schema(
       enum: ["cod", "card"],
       required: true,
     },
-    orderStatus: [
-      {
-        type: {
-          type: String,
-          enum: ["ordered", "packed", "shipped", "delivered"],
-          default: "ordered",
-        },
-        date: {
-          type: Date,
-        },
-        isCompleted: {
-          type: Boolean,
-          default: false,
-        },
-      },
-    ],
   },
   { timestamps: true }
 );
