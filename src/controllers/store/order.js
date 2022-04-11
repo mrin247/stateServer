@@ -5,6 +5,7 @@ const Address = require("../../models/Address");
 
 exports.updateOrder = async (req, res, next) => {
   const { orderId, productId } = req.body;
+
   try {
     const order = await Order.findOneAndUpdate(
       {
@@ -32,13 +33,20 @@ exports.getCustomerOrders = async (req, res, next) => {
   const sellerId = req.user._id;
   try {
     const orders = await Order.find({ "items.sellerId": sellerId })
-      .select("items")
+      .select("items _id")
       .populate("items.productId", "name");
 
     if (orders) {
       let itemArray = [];
       orders.map((order) => {
+        const id = order._id;
+
         order.items.map((items) => {
+          //items={...items,orderId:order._id}
+          //const orderIds={orderId:order._id};
+          //Object.assign(items,orderIds);
+          items._id = id;
+
           itemArray.push(items);
         });
       });
