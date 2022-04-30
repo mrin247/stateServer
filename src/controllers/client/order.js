@@ -78,6 +78,24 @@ exports.createPaymentOrder = async (req, res, next) => {
   }
 };
 
+exports.verifyOrderSign=(req,res)=>{
+  console.log(JSON.stringify(req.body));
+
+  const crypto = require("crypto");
+  const hash = crypto
+    .createHmac("sha256", "mrinmoy")
+    .update(JSON.stringify(req.body))
+    .digest("hex");
+
+  console.log(hash);
+  console.log(req.headers["x-razorpay-signature"]);
+  if (hash === req.headers["x-razorpay-signature"]) {
+    console.log("OKAY");
+  } else {
+    console.log("NOT OKAY");
+  }
+}
+
 exports.getOrders = async (req, res, next) => {
   const user = req.user._id;
   try {
