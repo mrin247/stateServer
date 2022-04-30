@@ -8,6 +8,8 @@ const cors = require("cors");
 // Import Error handlers
 const errorhandler = require("./middlewares/errHandler");
 
+
+
 // Setup App & DB
 const app = express();
 connectDB();
@@ -39,6 +41,7 @@ app.use("/api", clientcartRoutes);
 app.use("/api", clientProductRoutes);
 app.use("/api", clientAddressRoutes);
 app.use("/api", clientOrderRoutes);
+
 
 // Error Middlewares
 app.use(errorhandler);

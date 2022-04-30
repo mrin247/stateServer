@@ -3,6 +3,7 @@ const Error = require("../../utils/errResponse");
 const Order = require("../../models/Order");
 const Cart = require("../../models/Cart");
 const Address = require("../../models/Address");
+const { createRazorpayOrder } = require("../../utils/razorpay");
 
 exports.addOrder = async (req, res, next) => {
   const user = req.user._id;
@@ -62,6 +63,17 @@ exports.addOrder = async (req, res, next) => {
       return new Error("Cart Not found", 401);
     }
   } catch (error) {
+    next(error);
+  }
+};
+
+exports.createPaymentOrder = async (req, res, next) => {
+  const { amount } = req.params;
+  try {
+    await createRazorpayOrder(res, amount);
+    
+  } catch (error) {
+    console.log(error);
     next(error);
   }
 };
