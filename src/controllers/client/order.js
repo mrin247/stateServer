@@ -52,6 +52,7 @@ exports.addOrder = async (req, res, next) => {
       //     isCompleted: false,
       //   },
       // ];
+      //console.log(req.body);
       const _order = new Order(req.body);
       const order = await _order.save();
       if (order) {
@@ -69,16 +70,17 @@ exports.addOrder = async (req, res, next) => {
 
 exports.createPaymentOrder = async (req, res, next) => {
   const { amount } = req.params;
+  const order = req.body;
+  //console.log(req.body);
   try {
-    await createRazorpayOrder(res, amount);
-    
+    await createRazorpayOrder(req, res, amount, next);
   } catch (error) {
     console.log(error);
     next(error);
   }
 };
 
-exports.verifyOrderSign=(req,res)=>{
+exports.verifyOrderSign = async (req, res, next) => {
   console.log(JSON.stringify(req.body));
 
   const crypto = require("crypto");
@@ -90,11 +92,23 @@ exports.verifyOrderSign=(req,res)=>{
   console.log(hash);
   console.log(req.headers["x-razorpay-signature"]);
   if (hash === req.headers["x-razorpay-signature"]) {
-    console.log("OKAY");
+    const payment_id = req.body.payload.payment.entity.id;
+    const order_id = req.body.payload.payment.entity.order_id;
+    try {
+      const order = await Order.findOneAndUpdate(
+        { paymentId: order_id },
+        { paymentStatus: "completed" },
+        { new: true }
+      );
+      return res.status(200).json({ sucess: true, order: order });
+    } catch (error) {
+      next(error);
+    }
   } else {
-    console.log("NOT OKAY");
+    console.log("NOT Verified");
+    return res.status(500).json({ sucess: fasle, mfg: "NOT VERIFIED" });
   }
-}
+};
 
 exports.getOrders = async (req, res, next) => {
   const user = req.user._id;

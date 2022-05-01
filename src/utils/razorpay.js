@@ -1,12 +1,17 @@
 // ! Razorpay
 const Razorpay = require("razorpay");
+const Cart = require("../models/Cart");
+const Error = require("../utils/errResponse");
+
+const Order = require("../models/Order");
+const env = require("dotenv").config();
 
 // ! Razorpay
 
-exports.createRazorpayOrder = (res, amount) => {
+exports.createRazorpayOrder = async (req, res, amount, next) => {
   const instance = new Razorpay({
-    key_id: "rzp_test_tHI8HRFAFNYymj",
-    key_secret: "esOVw7hvgjSXXiZDb7UWa8bP",
+    key_id: process.env.RAZORPAY_KEY,
+    key_secret: process.env.RAZORPAY_SECRET,
   });
 
   const options = {
@@ -14,11 +19,56 @@ exports.createRazorpayOrder = (res, amount) => {
     currency: "INR",
     receipt: "order_rcptid_11",
   };
-  instance.orders.create(options, function (err, order) {
+  instance.orders.create(options, async function (err, order) {
     if (err) {
       return res.status(500).json(err);
     }
-    return res.status(200).json(order);
+    //console.log(order.id);
+    const user = req.user._id;
+    req.body.paymentId = order.id;
+    //console.log("mrin body", req.body);
+    try {
+      const result = await Cart.deleteOne({ user: user });
+      if (result.deletedCount > 0) {
+        // Cart deleted Successfully
+        req.body.user = user;
+        req.body.items.map((item) => {
+          item.orderStatus = [
+            {
+              type: "ordered",
+              date: new Date(),
+              isCompleted: true,
+            },
+            {
+              type: "packed",
+              isCompleted: false,
+            },
+            {
+              type: "shipped",
+              isCompleted: false,
+            },
+            {
+              type: "delivered",
+              isCompleted: false,
+            },
+          ];
+        });
+
+        const _order = new Order(req.body);
+        const newOrder = await _order.save();
+        if (newOrder) {
+          return res.status(200).json(order);
+        } else {
+          return new Error("Order failed", 400);
+        }
+      } else {
+        return new Error("Cart Not found", 401);
+      }
+    } catch (error) {
+      next(error);
+    }
+
+    //return res.status(200).json(order);
   });
 };
 
