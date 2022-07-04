@@ -118,7 +118,7 @@ exports.getOrders = async (req, res, next) => {
       .populate("items.productId", "_id name productPhotos")
       .populate("items.sellerId", "_id firstName");
     if (order) {
-      return res.status(200).json({ success: true, order });
+      return res.status(200).json({ success: true, order: order });
     } else {
       return new Error("Order is not found", 401);
     }
