@@ -3,6 +3,7 @@ const express = require("express");
 const {
   getProductByCategory,
   getProductById,
+  getAllProducts,
 } = require("../../controllers/client/product");
 
 // Import Controllers
@@ -11,6 +12,7 @@ const {
 const router = express.Router();
 
 // Routes
+router.get("/client/allproduct", getAllProducts);
 router.get("/client/product", getProductByCategory);
 router.get("/client/product/:productId", getProductById);
 
