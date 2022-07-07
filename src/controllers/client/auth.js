@@ -11,7 +11,16 @@ const { sendEmail } = require("../../utils/sendEmail");
 // Signup controller
 exports.clientSignup = async (req, res, next) => {
   // Destructure inputs
-  const { firstName, lastName, email, password, contactNumber, address, state, pin } = req.body;
+  const {
+    firstName,
+    lastName,
+    email,
+    password,
+    contactNumber,
+    address,
+    state,
+    pin,
+  } = req.body;
 
   // Existing User
   const userExists = await User.findOne({ email });
@@ -27,7 +36,9 @@ exports.clientSignup = async (req, res, next) => {
     lastName,
     role,
     contactNumber,
-    address, state, pin,
+    address,
+    state,
+    pin,
     email,
     password,
   });
@@ -188,6 +199,7 @@ const sendToken = (_user, statusCode, res) => {
     role: _user.role,
     firstName: _user.firstName,
     lastName: _user.lastName,
+    contactNumber: _user.contactNumber,
   };
   res.cookie("token", token, { expiresIn: "10d" });
   res.status(statusCode).json({
