@@ -16,7 +16,11 @@ exports.getAllProducts = async (req, res, next) => {
 exports.getProductByCategory = async (req, res, next) => {
   const category = req.query.c;
   try {
-    const _Products = await Product.find({ category: category });
+    const _Products = await Product.find({ category: category })
+      .sort({
+        price: "asc",
+      })
+      .populate("createdBy", "_id firstName");
     if (!_Products) {
       return next(new Error("No products found", 204));
     }

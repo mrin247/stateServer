@@ -40,7 +40,9 @@ app.use("/api", clientProductRoutes);
 app.use("/api", clientAddressRoutes);
 app.use("/api", clientOrderRoutes);
 
-
+app.get("/", (req, res) => {
+  res.send("Server Deployed");
+});
 
 // Error Middlewares
 app.use(errorhandler);
