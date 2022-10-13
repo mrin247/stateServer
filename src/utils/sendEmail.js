@@ -23,7 +23,7 @@ exports.sendEmail = (options) => {
     if (err) {
       console.log(err);
     } else {
-      console.log(`Email Sent: ${info.envelope}`);
+      console.log(`Email Sent: ${JSON.stringify(info.envelope)}`);
     }
   });
 };
